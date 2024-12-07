@@ -108,8 +108,20 @@
       const data = await response.json();
 
       if (Array.isArray(data)) {
-        return data.filter(file => file.type === 'file' && file.name.match(/\.(jpg|jpeg|png|gif)$/i))
-                   .map(file => file.download_url);
+        // Filter for image files and extract URLs
+        const imageFiles = data.filter(file => file.type === 'file' && file.name.match(/\.(jpg|jpeg|png|gif)$/i));
+        
+        // Sort image files numerically by filename (assumes filenames like 000.jpg, 001.jpg, etc.)
+        imageFiles.sort((a, b) => {
+          const fileNameA = a.name.match(/(\d+)\./); // Match digits before the extension
+          const fileNameB = b.name.match(/(\d+)\./);
+          
+          // If both filenames match, sort by the numeric value
+          return parseInt(fileNameA[1]) - parseInt(fileNameB[1]);
+        });
+
+        // Return the download URLs in sorted order
+        return imageFiles.map(file => file.download_url);
       } else {
         console.error("Error fetching data from GitHub API:", data);
         return [];
@@ -167,3 +179,4 @@
   </script>
 </body>
 </html>
+
