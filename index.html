@@ -23,34 +23,21 @@
       padding: 5px;
       box-sizing: border-box;
     }
-    button {
-      padding: 10px;
-      font-size: 16px;
-      cursor: pointer;
-      margin-bottom: 20px;
-      margin-right: 10px;
-    }
   </style>
 </head>
 <body>
-  <h1>Image Viewer</h1>
-  
-  <div>
-    <button onclick="loadImages('A')">Show Images from Folder A</button>
-    <button onclick="loadImages('B')">Show Images from Folder B</button>
-  </div>
+  <h1>Image Gallery</h1>
 
   <div id="imageContainer"></div>
 
   <script>
     const repoOwner = 'SeriesTeleVision';  // Replace with your GitHub username
     const repoName = 'Series';  // Replace with your GitHub repository name
-    const githubApiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/`;
+    const githubApiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/A`;
 
-    // Function to fetch images from a folder
-    async function fetchImageList(folder) {
-      const url = `${githubApiUrl}${folder}`;
-      const response = await fetch(url);
+    // Function to fetch images from folder A
+    async function fetchImageList() {
+      const response = await fetch(githubApiUrl);
       const data = await response.json();
 
       if (Array.isArray(data)) {
@@ -62,22 +49,22 @@
       }
     }
 
-    // Function to load images based on selected folder
-    async function loadImages(folder) {
+    // Function to load images from folder A
+    async function loadImages() {
       const imageContainer = document.getElementById('imageContainer');
-      imageContainer.innerHTML = ''; // Clear the current images
+      imageContainer.innerHTML = ''; // Clear any existing images
 
       try {
-        const imageUrls = await fetchImageList(folder);
+        const imageUrls = await fetchImageList();
         if (imageUrls.length === 0) {
-          imageContainer.innerHTML = 'No images found in this folder.';
+          imageContainer.innerHTML = 'No images found in folder A.';
           return;
         }
 
         imageUrls.forEach(url => {
           const imgElement = document.createElement('img');
           imgElement.src = url;
-          imgElement.alt = `Image from ${folder}`;
+          imgElement.alt = 'Image from folder A';
           imageContainer.appendChild(imgElement);
         });
       } catch (error) {
@@ -85,6 +72,9 @@
         console.error(error);
       }
     }
+
+    // Load images when the page loads
+    window.onload = loadImages;
   </script>
 </body>
 </html>
