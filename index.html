@@ -22,6 +22,10 @@
       margin-top: 20px;
     }
 
+    .imageWrapper {
+      text-align: center; /* Center align the number under the image */
+    }
+
     img {
       max-width: 100%;
       max-height: 200px; /* Limit image height */
@@ -145,7 +149,24 @@
           imgElement.src = url;
           imgElement.alt = 'Image from folder A';
           imgElement.onclick = () => openModal(url);  // Add event listener to open modal
-          imageContainer.appendChild(imgElement);
+
+          // Extract the number from the filename (e.g., 001 from 001.jpg)
+          const fileNameMatch = url.match(/(\d+)\.jpg$/);
+          const imageNumber = fileNameMatch ? fileNameMatch[1] : 'Unknown';
+
+          // Create a wrapper div for the image and its number
+          const wrapperDiv = document.createElement('div');
+          wrapperDiv.classList.add('imageWrapper');
+
+          // Add the image and the number to the wrapper
+          wrapperDiv.appendChild(imgElement);
+
+          // Create and append a div for the image number
+          const numberDiv = document.createElement('div');
+          numberDiv.innerText = imageNumber;
+          wrapperDiv.appendChild(numberDiv);
+
+          imageContainer.appendChild(wrapperDiv);
         });
       } catch (error) {
         imageContainer.innerHTML = 'Error loading images.';
@@ -179,4 +200,5 @@
   </script>
 </body>
 </html>
+
 
