@@ -155,9 +155,15 @@
       modal.style.display = 'none';
     };
 
+    // Close the modal when clicking outside the image (on the modal background)
+    document.getElementById('modal').onclick = (event) => {
+      if (event.target === document.getElementById('modal')) {
+        document.getElementById('modal').style.display = 'none';
+      }
+    };
+
     // Load images when the page loads
     window.onload = loadImages;
   </script>
 </body>
 </html>
-
