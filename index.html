@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GitHub Image Viewer</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+    #imageContainer {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    img {
+      max-width: 200px;
+      height: auto;
+      border: 1px solid #ccc;
+      padding: 5px;
+      box-sizing: border-box;
+    }
+    button {
+      padding: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-bottom: 20px;
+      margin-right: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Image Viewer</h1>
+  
+  <div>
+    <button onclick="loadImages('A')">Show Images from Folder A</button>
+    <button onclick="loadImages('B')">Show Images from Folder B</button>
+  </div>
+
+  <div id="imageContainer"></div>
+
+  <script>
+    const repoOwner = 'your-username';  // Replace with your GitHub username
+    const repoName = 'your-repo-name';  // Replace with your GitHub repository name
+    const githubApiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/`;
+
+    // Function to fetch images from a folder
+    async function fetchImageList(folder) {
+      const url = `${githubApiUrl}${folder}`;
+      const response = await fetch(url);
+      const data = await response.json();
+
+      if (Array.isArray(data)) {
+        return data.filter(file => file.type === 'file' && file.name.match(/\.(jpg|jpeg|png|gif)$/i))
+                   .map(file => file.download_url);
+      } else {
+        console.error("Error fetching data from GitHub API:", data);
+        return [];
+      }
+    }
+
+    // Function to load images based on selected folder
+    async function loadImages(folder) {
+      const imageContainer = document.getElementById('imageContainer');
+      imageContainer.innerHTML = ''; // Clear the current images
+
+      try {
+        const imageUrls = await fetchImageList(folder);
+        if (imageUrls.length === 0) {
+          imageContainer.innerHTML = 'No images found in this folder.';
+          return;
+        }
+
+        imageUrls.forEach(url => {
+          const imgElement = document.createElement('img');
+          imgElement.src = url;
+          imgElement.alt = `Image from ${folder}`;
+          imageContainer.appendChild(imgElement);
+        });
+      } catch (error) {
+        imageContainer.innerHTML = 'Error loading images.';
+        console.error(error);
+      }
+    }
+  </script>
+</body>
+</html>
